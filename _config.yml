@@ -6,15 +6,15 @@
 # https://learn-the-web.algonquindesign.ca/topics/markdown-yaml-cheat-sheet/#yaml
 # https://learnxinyminutes.com/docs/yaml/
 
-title: fastpages
-description: An easy to use blogging platform with support for Jupyter Notebooks.
+title: GPU Train 
+description: Joseph Matthew's machine learning journey through blog and code on GPUs
 github_username: gputrain
 # you can comment the below line out if your repo name is not different than your baseurl
 github_repo: "gputrainsite"
 
 # OPTIONAL: override baseurl and url if using a custom domain
 # Note: leave out the trailing / from this value. 
-url: "https://gputrain.github.io" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://www.gputrain.com" # the base hostname & protocol for your site, e.g. http://example.com
 
 ###########################################################
 #########  Special Instructions for baseurl ###############
@@ -34,13 +34,13 @@ url: "https://gputrain.github.io" # the base hostname & protocol for your site, 
 #
 # 3. You must replace the parameter `baseurl` in _action_files/settings.ini with the same value as you set here but WITHOUT QUOTES.
 #
-baseurl: "/gputrainsite" # the subpath of your site, e.g. "/blog".
+baseurl: "" # the subpath of your site, e.g. "/blog".
 
 # Github and twitter are optional:
 minima:
   social_links:
-    twitter: fastdotai
-    github: fastai
+    twitter: gputrain
+    github: gputrain
 
 # Set this to true to get LaTeX math equation support
 use_math: 
@@ -49,7 +49,7 @@ use_math:
 show_description: true
 
 # Set this to true to display image previews on home page, if they exist
-show_image: false
+show_image: true
 
 # Set this to true to turn on annotations with hypothes.is (https://web.hypothes.is/)
 annotations: false
