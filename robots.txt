@@ -1,1 +1,1 @@
-Sitemap: https://gputrain.github.io/gputrainsite/sitemap.xml
+Sitemap: https://www.gputrain.com/sitemap.xml
