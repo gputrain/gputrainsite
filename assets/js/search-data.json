@@ -11,6 +11,17 @@
         
     
   
+    
+        ,"post1": {
+            "title": "3. Deploying a Fast AI model to Hugging Face",
+            "content": "Know before getting started . This notebook code is the same used to create my app.py file you can find in UrbanSounds8k spaces repo. . Creating a space is simple and intuitive at Hugging Face. You will need a &quot;Create a new space&quot; and &quot;Create a new model repository&quot; at huggingfaces. You will find the interface to create a new model repository (repo) in your profile settings. . If you upload your model artifacts into your spaces repository, you will run into 404 or 403 series errors. Once you create a model repo, the installation steps of Hugging Face will have an install git lfs in the set of instructions specific to the location you clone this empty repo. . If you upload your model artifacts into your spaces repository, you will run into 404 or 403 series errors. Once you create a model repo, the installation steps of Hugging Face will have an install git lfs in the set of instructions specific to the location you clone this empty repo. . Add in that repo before copying your model the *.pkl file from the earlier step; ensure you track pkl files as a type of file managed by Git LFS . git lfs track &quot;*.pkl&quot; . Tip: Note what is my spaces repo and what is in my model repo . If you miss this step you will run into 403 errors as you execute this line: . model_file = hf_hub_download(&quot;gputrain/UrbanSound8K-model&quot;, &quot;model.pkl&quot;) . Back to spaces repo, for which I have specific requirements.txt to be able to load librosa modules to get my inference function to work. In my example, I also needed to get my labeller function to get my model to work. This requirements.txt is my spaces repo. .",
+            "url": "https://www.gputrain.com/sound/hugging%20face/fastai/2004/05/25/Deploying-the-Model-to-Hugging-Face-Copy3.html",
+            "relUrl": "/sound/hugging%20face/fastai/2004/05/25/Deploying-the-Model-to-Hugging-Face-Copy3.html",
+            "date": " • May 25, 2004"
+        }
+        
+    
+  
 
   
   
