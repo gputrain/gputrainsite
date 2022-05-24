@@ -1,7 +1,7 @@
 ---
 layout: page
 title: About Joe
-permalink: /about-joseph-matthew/
+permalink: /about/
 ---
 
 ![]({{site.baseurl}}/images/Joseph_Matthew.jpg "Joseph Matthew")
