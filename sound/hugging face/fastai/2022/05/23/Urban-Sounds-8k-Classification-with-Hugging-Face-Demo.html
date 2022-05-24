@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Urban Sounds 8k Classification with Hugging Face Demo | GPU Train</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="Urban Sounds 8k Classification with Hugging Face Demo" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="First tutorial using fastpages Jupyter notebook blog - Deploy a fast ai model to HuggingFaces" />
+<meta property="og:description" content="First tutorial using fastpages Jupyter notebook blog - Deploy a fast ai model to HuggingFaces" />
+<link rel="canonical" href="https://www.gputrain.com/sound/hugging%20face/fastai/2022/05/23/Urban-Sounds-8k-Classification-with-Hugging-Face-Demo.html" />
+<meta property="og:url" content="https://www.gputrain.com/sound/hugging%20face/fastai/2022/05/23/Urban-Sounds-8k-Classification-with-Hugging-Face-Demo.html" />
+<meta property="og:site_name" content="GPU Train" />
+<meta property="og:image" content="https://www.gputrain.com/images/melspectrogram.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-05-23T00:00:00-05:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://www.gputrain.com/images/melspectrogram.png" />
+<meta property="twitter:title" content="Urban Sounds 8k Classification with Hugging Face Demo" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-05-23T00:00:00-05:00","datePublished":"2022-05-23T00:00:00-05:00","description":"First tutorial using fastpages Jupyter notebook blog - Deploy a fast ai model to HuggingFaces","headline":"Urban Sounds 8k Classification with Hugging Face Demo","image":"https://www.gputrain.com/images/melspectrogram.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://www.gputrain.com/sound/hugging%20face/fastai/2022/05/23/Urban-Sounds-8k-Classification-with-Hugging-Face-Demo.html"},"url":"https://www.gputrain.com/sound/hugging%20face/fastai/2022/05/23/Urban-Sounds-8k-Classification-with-Hugging-Face-Demo.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://www.gputrain.com/feed.xml" title="GPU Train" /><link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">GPU Train</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About Joe</a><a class="page-link" href="/search/">Search</a><a class="page-link" href="/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Urban Sounds 8k Classification with Hugging Face Demo</h1><p class="page-description">First tutorial using fastpages Jupyter notebook blog - Deploy a fast ai model to HuggingFaces</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-05-23T00:00:00-05:00" itemprop="datePublished">
+        May 23, 2022
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      2 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/categories/#sound">sound</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#hugging face">hugging face</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/categories/#fastai">fastai</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-justify-center">
+          <div class="px-2">
+
+    <a href="https://github.com/gputrain/gputrainsite/tree/master/_notebooks/2022-05-23-Urban Sounds 8k Classification with Hugging Face Demo.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://mybinder.org/v2/gh/gputrain/gputrainsite/master?filepath=_notebooks%2F2022-05-23-Urban+Sounds+8k+Classification+with+Hugging+Face+Demo.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/assets/badges/binder.svg" alt="Open In Binder"/>
+    </a>
+</div>
+
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/gputrain/gputrainsite/blob/master/_notebooks/2022-05-23-Urban Sounds 8k Classification with Hugging Face Demo.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+          <div class="px-2">
+  <a href="https://deepnote.com/launch?url=https%3A%2F%2Fgithub.com%2Fgputrain%2Fgputrainsite%2Fblob%2Fmaster%2F_notebooks%2F2022-05-23-Urban+Sounds+8k+Classification+with+Hugging+Face+Demo.ipynb" target="_blank">
+      <img class="notebook-badge-image" src="/assets/badges/deepnote.svg" alt="Launch in Deepnote"/>
+  </a>
+</div>
+
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Hugging-Face-Demo">Hugging Face Demo </a></li>
+<li class="toc-entry toc-h2"><a href="#Background">Background </a></li>
+<li class="toc-entry toc-h2"><a href="#Code">Code </a>
+<ul>
+<li class="toc-entry toc-h3"><a href="#Import-the-necessary-modules">Import the necessary modules </a></li>
+<li class="toc-entry toc-h3"><a href="#Custom-Labelling-Function-For-Classification">Custom Labelling Function For Classification </a></li>
+<li class="toc-entry toc-h3"><a href="#File-distribution-across-the-folds">File distribution across the folds </a></li>
+<li class="toc-entry toc-h3"><a href="#Class-distribution-across-the-sound-types">Class distribution across the sound types </a></li>
+<li class="toc-entry toc-h3"><a href="#Model-Build">Model Build </a></li>
+<li class="toc-entry toc-h3"><a href="#Datablock-with-an-80-20-Random-split-on-entire-dataset">Datablock with an 80-20 Random split on entire dataset </a></li>
+<li class="toc-entry toc-h3"><a href="#Export-the-model">Export the model </a></li>
+</ul>
+</li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2022-05-23-Urban Sounds 8k Classification with Hugging Face Demo.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Hugging-Face-Demo">
+<a class="anchor" href="#Hugging-Face-Demo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Hugging Face Demo<a class="anchor-link" href="#Hugging-Face-Demo"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here is a demo of what this model at Hugging Face : <a href="https://huggingface.co/spaces/gputrain/UrbanSounds8K">Urban Sound 8K Classification</a></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Background">
+<a class="anchor" href="#Background" aria-hidden="true"><span class="octicon octicon-link"></span></a>Background<a class="anchor-link" href="#Background"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Urban Sounds is a dataset of 8732 labeled sounds of less than 4 seconds each from 10 classes. Dataset for <a href="https://urbansounddataset.weebly.com/urbansound8k.html">UrbanSounds8K</a> contains these 10 classes:</p>
+<ol>
+<li>air_conditioner</li>
+<li>car_horn</li>
+<li>children_playing</li>
+<li>dog_bark</li>
+<li>drilling</li>
+<li>engine_idling</li>
+<li>gun_shot</li>
+<li>jackhammer</li>
+<li>siren</li>
+<li>street_music</li>
+</ol>
+<p><a href="https://www.researchgate.net/publication/335862311_Evaluation_of_Classical_Machine_Learning_Techniques_towards_Urban_Sound_Recognition_on_Embedded_Systems">Research with this dataset as of 2019</a> and optimized ML approaches as of late 2019 had classification accuracy at 74% with a k-nearest neighbours (KNN) algorithm. A deep learning neural network trained from scratch obtained accuracy at 76% accuracy.</p>
+<p><img src="https://www.researchgate.net/profile/Bruno-Silva-172/publication/335862311/figure/fig2/AS:804132151652353@1568731453277/Achieved-accuracy-of-the-classifiers-with-their-default-and-optimized-configuration.png" alt="Accuracy metrics" title="research"></p>
+<p><em>(accuracy metrics for research article)</em></p>
+<p>The state-of-the-art methods for audio classification approach  this problem as an image classification task. For such image classification problems from audio samples, three common transformation approaches are:</p>
+<ul>
+<li>
+<ol>
+<li>Linear Spectrograms</li>
+</ol>
+</li>
+<li>
+<ol>
+<li>Log Spectrograms</li>
+</ol>
+</li>
+<li>
+<ol>
+<li>Mel Spectrograms</li>
+</ol>
+</li>
+</ul>
+<p>You can learn more about these three transformations in <a href="https://scottmduda.medium.com/urban-environmental-audio-classification-using-mel-spectrograms-706ee6f8dcc1">Scott Duda's article</a> and <a href="https://towardsdatascience.com/audio-deep-learning-made-simple-part-2-why-mel-spectrograms-perform-better-aad889a93505">Ketan Doshi's writing</a>, reasoning why Mel Spectrograms perform better in general for visual transformations of audio files.</p>
+<p>The transformation on these audio files is another notebook that I will add a write-up here. You can find all of the associated <a href="https://github.com/gputrain/fastai2-coursework">code here</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Code">
+<a class="anchor" href="#Code" aria-hidden="true"><span class="octicon octicon-link"></span></a>Code<a class="anchor-link" href="#Code"> </a>
+</h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Import-the-necessary-modules">
+<a class="anchor" href="#Import-the-necessary-modules" aria-hidden="true"><span class="octicon octicon-link"></span></a>Import the necessary modules<a class="anchor-link" href="#Import-the-necessary-modules"> </a>
+</h3>
+<p>Using an AWS conda_pytorch_p38 environment with a ml.g4dn.2xlarge machine type</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># !pip install librosa</span>
+<span class="c1"># !pip install fastbook</span>
+<span class="c1"># !pip install gradio</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+</div>
+    
+
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">fastai.vision.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">fastai.data.all</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">import</span> <span class="n">specgram</span>
+<span class="kn">import</span> <span class="nn">librosa</span>
+<span class="kn">import</span> <span class="nn">librosa.display</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">IPython</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">accuracy_score</span>
+<span class="kn">import</span> <span class="nn">gradio</span> <span class="k">as</span> <span class="nn">gr</span>
+
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Custom-Labelling-Function-For-Classification">
+<a class="anchor" href="#Custom-Labelling-Function-For-Classification" aria-hidden="true"><span class="octicon octicon-link"></span></a>Custom Labelling Function For Classification<a class="anchor-link" href="#Custom-Labelling-Function-For-Classification"> </a>
+</h3>
+<p>This function reads the categorisation information into a dictionary and then uses that filename lookup to recognise the class of a particular image</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description" open="">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">'UrbanSound8K/metadata/UrbanSound8K.csv'</span><span class="p">)</span>  <span class="c1">#classification information across folds as provided from Urbansounds</span>
+<span class="n">df</span><span class="p">[</span><span class="s1">'fname'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="s1">'slice_file_name'</span><span class="p">,</span><span class="s1">'fold'</span><span class="p">]]</span><span class="o">.</span><span class="n">apply</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="s1">'slice_file_name'</span><span class="p">][:</span><span class="o">-</span><span class="mi">4</span><span class="p">])</span><span class="o">+</span><span class="s1">'.png'</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span> <span class="p">)</span>
+<span class="n">my_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">fname</span><span class="p">,</span><span class="n">df</span><span class="p">[</span><span class="s1">'class'</span><span class="p">]))</span>
+<span class="k">def</span> <span class="nf">label_func</span><span class="p">(</span><span class="n">f_name</span><span class="p">):</span>
+    <span class="n">f_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">f_name</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">:][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">my_dict</span><span class="p">[</span><span class="n">f_name</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="File-distribution-across-the-folds">
+<a class="anchor" href="#File-distribution-across-the-folds" aria-hidden="true"><span class="octicon octicon-link"></span></a>File distribution across the folds<a class="anchor-link" href="#File-distribution-across-the-folds"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description" open="">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">'fold'</span><span class="p">])</span><span class="o">.</span><span class="n">classID</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">bar</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'Files in each fold'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Files in each fold'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Text(0.5, 1.0, 'Files in each fold')</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Class-distribution-across-the-sound-types">
+<a class="anchor" href="#Class-distribution-across-the-sound-types" aria-hidden="true"><span class="octicon octicon-link"></span></a>Class distribution across the sound types<a class="anchor-link" href="#Class-distribution-across-the-sound-types"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description" open="">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'class'</span><span class="p">)</span><span class="o">.</span><span class="n">classID</span><span class="o">.</span><span class="n">count</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">bar</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">'count'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">'Class distribution in the dataset'</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>Text(0.5, 1.0, 'Class distribution in the dataset')</pre>
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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ySIiIholWURERKMki4iIaJRkERERjZIsIiKiUZJFREQ0SrKIiIhGSRYREdEoySIiIholWURERKMki4iIaJRkERERjZIsIiKiUZJFREQ0SrKIiIhGSRYREdEoySIiIholWURERKNOkoWkd0i6WNJvJX1L0oqS1pJ0kqQ/1Ns1+85/n6TLJV0m6UVdxBwRMZO1niwkrQ+8DdjW9lbAssDewIHAybY3B06uj5G0RX1+S2Bn4DBJy7Ydd0TETNZVM9RywMMlLQesBFwH7AYcVZ8/Cti93t8N+Lbtu21fCVwObNduuBERM1vrycL2tcAngT8B84FbbZ8IPNL2/HrOfGCd+pL1gWv63mJePTaBpP0lzZE058YbbxzWtxARMeN00Qy1JqW2sCmwHrCypH0W95IBxzzoRNuH297W9razZs1a+mAjIgLophnq+cCVtm+0fS/wPeCZwPWS1gWotzfU8+cBG/a9fgNKs1VERLSki2TxJ2B7SStJErATcClwPLBvPWdf4Lh6/3hgb0krSNoU2Bw4u+WYIyJmtOXaLtD2WZKOBc4F7gPOAw4HVgFmS9qPklD2rOdfLGk2cEk9/82272877oiImaz1ZAFg+yDgoHGH76bUMgadfzBw8LDjioiIwTKDOyIiGiVZREREoySLiIholGQRERGNkiwiIqJRkkVERDRKsoiIiEZJFhER0SjJIiIiGiVZREREoySLiIholGQRERGNkiwiIqJRkkVERDRKsoiIiEZJFhER0SjJIiIiGiVZREREoySLiIholGQRERGNkiwiIqJRkkVERDRKsoiIiEZJFhER0SjJIiIiGiVZREREoySLiIholGQRERGNkiwiIqJRkkVERDRKsoiIiEZJFhER0aiTZCFpDUnHSvqdpEslPUPSWpJOkvSHertm3/nvk3S5pMskvaiLmCMiZrKuahafBX5q+/HA1sClwIHAybY3B06uj5G0BbA3sCWwM3CYpGU7iToiYoZqPVlIWg34B+ArALbvsb0A2A04qp52FLB7vb8b8G3bd9u+Ergc2K7NmCMiZrouahabATcCR0g6T9L/SVoZeKTt+QD1dp16/vrANX2vn1ePTSBpf0lzJM258cYbh/cdRETMMF0ki+WAbYAv2n4KcCe1yWkSGnDMg060fbjtbW1vO2vWrKWPNCIigG6SxTxgnu2z6uNjKcnjeknrAtTbG/rO37Dv9RsA17UUa0RE0EGysP1n4BpJj6uHdgIuAY4H9q3H9gWOq/ePB/aWtIKkTYHNgbNbDDkiYsZbrqNy3wocLelhwBXAaymJa7ak/YA/AXsC2L5Y0mxKQrkPeLPt+7sJOyJiZppSspB0su2dmo5Nle3zgW0HPDXw/WwfDBz8YMqKiIilt9hkIWlFYCVg7TpJrtfZvBqw3pBji4iIEdFUs/gX4O2UxDCXsWRxG/CF4YUVERGjZLHJwvZngc9KeqvtQ1uKKSIiRsyU+ixsHyrpmcAm/a+x/bUhxRURESNkqh3cXwceDZwP9EYiGUiyiIiYAaY6dHZbYAvbA2dOR0TE37epTsr7LfCoYQYSERGja6o1i7WBSySdDdzdO2h716FEFRERI2WqyeJDwwwiIiJG21RHQ/1y2IFERMTomupoqNsZWxb8YcDywJ22VxtWYBERMTqmWrNYtf+xpN3JbnURETPGg1qi3PYPgB2nN5SIiBhVU22G2qPv4TKUeReZcxERMUNMdTTULn337wOuAnab9mgiImIkTbXP4rXDDiQiIkbXlPosJG0g6fuSbpB0vaTvStpg2MFFRMRomGoH9xGUvbDXA9YHfliPRUTEDDDVZDHL9hG276tfRwKzhhhXRESMkKkmi5sk7SNp2fq1D3DzMAOLiIjRMdVk8TpgL+DPwHzg5UA6vSMiZoipDp39KLCv7VsAJK0FfJKSRCIi4u/cVGsWT+olCgDbfwGeMpyQIiJi1Ew1WSwjac3eg1qzmGqtJCIiHuKm+oH/KeAMScdSlvnYCzh4aFFFRMRImeoM7q9JmkNZPFDAHrYvGWpkERExMqbclFSTQxJERMQM9KCWKI+IiJklySIiIholWURERKMMf42IaLDJgT9a6ve46pCXTEMk3UnNIiIiGiVZREREo86SRV299jxJJ9THa0k6SdIf6m3/jPH3Sbpc0mWSXtRVzBERM1WXNYsDgEv7Hh8InGx7c+Dk+hhJWwB7A1sCOwOHSVq25VgjIma0TpJF3ZL1JcD/9R3eDTiq3j8K2L3v+Ldt3237SuByYLuWQo2ICLqrWXwGeC/wQN+xR9qeD1Bv16nH1weu6TtvXj02gaT9Jc2RNOfGG2+c9qAjImaq1pOFpJcCN9ieO9WXDDjmQSfaPtz2tra3nTUru75GREyXLuZZ7ADsKunFwIrAapK+AVwvaV3b8yWtC9xQz58HbNj3+g2A61qNOCJihmu9ZmH7fbY3sL0JpeP6F7b3AY4H9q2n7QscV+8fD+wtaQVJmwKbA2e3HHZExIw2SjO4DwFmS9oP+BOwJ4DtiyXNpqx4ex/wZtv3dxdmRMTM02mysH0qcGq9fzOw0yTnHUw2W4qIGazrJUcygzsiIholWURERKMki4iIaJRkERERjZIsIiKiUZJFREQ0SrKIiIhGSRYREdEoySIiIholWURERKMki4iIaJRkERERjZIsIiKiUZJFREQ0SrKIiIhGSRYREdEoySIiIholWURERKMki4iIaJRkERERjZIsIiKiUZJFREQ0SrKIiIhGSRYREdEoySIiIholWURERKMki4iIaJRkERERjZIsIiKiUZJFREQ0SrKIiIhGSRYREdGo9WQhaUNJp0i6VNLFkg6ox9eSdJKkP9TbNfte8z5Jl0u6TNKL2o45ImKm66JmcR/wLttPALYH3ixpC+BA4GTbmwMn18fU5/YGtgR2Bg6TtGwHcUdEzFitJwvb822fW+/fDlwKrA/sBhxVTzsK2L3e3w34tu27bV8JXA5s12rQEREzXKd9FpI2AZ4CnAU80vZ8KAkFWKeetj5wTd/L5tVjg95vf0lzJM258cYbhxZ3RMRM01mykLQK8F3g7bZvW9ypA4550Im2D7e9re1tZ82aNR1hRkQEHSULSctTEsXRtr9XD18vad36/LrADfX4PGDDvpdvAFzXVqwREdHNaCgBXwEutf3pvqeOB/at9/cFjus7vrekFSRtCmwOnN1WvBERAct1UOYOwKuBiySdX4+9HzgEmC1pP+BPwJ4Ati+WNBu4hDKS6s2272896oiIGaz1ZGH7NAb3QwDsNMlrDgYOHlpQERGxWJnBHRERjZIsIiKiUZJFREQ0SrKIiIhGSRYREdEoySIiIholWURERKMki4iIaJRkERERjZIsIiKiUZJFREQ0SrKIiIhGSRYREdEoySIiIholWURERKMki4iIaJRkERERjZIsIiKiUZJFREQ0SrKIiIhGSRYREdEoySIiIholWURERKMki4iIaJRkERERjZIsIiKiUZJFREQ0SrKIiIhGSRYREdEoySIiIholWURERKMki4iIaJRkERERjR4yyULSzpIuk3S5pAO7jiciYiZ5SCQLScsCXwD+EdgCeKWkLbqNKiJi5nhI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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Model-Build">
+<a class="anchor" href="#Model-Build" aria-hidden="true"><span class="octicon octicon-link"></span></a>Model Build<a class="anchor-link" href="#Model-Build"> </a>
+</h3>
+<p>Spider through all the folders for images (transformation of sound to melspectrograms is another notebook).</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">all_folds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">11</span><span class="p">))</span>
+<span class="n">all_folders</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">all_folds</span><span class="p">]</span>
+<span class="n">image_files_loc</span> <span class="o">=</span> <span class="s1">'UrbanSoundTransforms/mel_spectrogram/'</span>
+<span class="n">all_files</span> <span class="o">=</span> <span class="n">get_image_files</span><span class="p">(</span><span class="n">image_files_loc</span><span class="p">,</span><span class="n">recurse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">folders</span> <span class="o">=</span><span class="n">all_folders</span> <span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Datablock-with-an-80-20-Random-split-on-entire-dataset">
+<a class="anchor" href="#Datablock-with-an-80-20-Random-split-on-entire-dataset" aria-hidden="true"><span class="octicon octicon-link"></span></a>Datablock with an 80-20 Random split on entire dataset<a class="anchor-link" href="#Datablock-with-an-80-20-Random-split-on-entire-dataset"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">dblock</span> <span class="o">=</span> <span class="n">DataBlock</span><span class="p">(</span><span class="n">blocks</span><span class="o">=</span><span class="p">(</span><span class="n">ImageBlock</span><span class="p">,</span><span class="n">CategoryBlock</span><span class="p">),</span>
+                   <span class="n">get_y</span>     <span class="o">=</span> <span class="n">label_func</span><span class="p">,</span>
+                   <span class="n">splitter</span>  <span class="o">=</span> <span class="n">RandomSplitter</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                   
+                  <span class="p">)</span>
+<span class="n">dl</span> <span class="o">=</span> <span class="n">dblock</span><span class="o">.</span><span class="n">dataloaders</span><span class="p">(</span><span class="n">all_files</span><span class="p">)</span>
+<span class="nb">print</span> <span class="p">(</span><span class="s1">'Train has </span><span class="si">{0}</span><span class="s1"> images and test has </span><span class="si">{1}</span><span class="s1"> images.'</span> <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">train_ds</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">valid_ds</span><span class="p">)))</span>
+<span class="n">learn</span> <span class="o">=</span> <span class="n">vision_learner</span><span class="p">(</span><span class="n">dl</span><span class="p">,</span> <span class="n">resnet34</span><span class="p">,</span> <span class="n">metrics</span><span class="o">=</span><span class="n">accuracy</span><span class="p">)</span>
+<span class="n">learn</span><span class="o">.</span><span class="n">fine_tune</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Train has 6986 images and test has 1746 images.
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: left;">
+      <th>epoch</th>
+      <th>train_loss</th>
+      <th>valid_loss</th>
+      <th>accuracy</th>
+      <th>time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>1.510322</td>
+      <td>0.698512</td>
+      <td>0.781787</td>
+      <td>00:31</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+
+<style>
+    /* Turns off some styling */
+    progress {
+        /* gets rid of default border in Firefox and Opera. */
+        border: none;
+        /* Needs to be in here for Safari polyfill so background images work as expected. */
+        background-size: auto;
+    }
+    .progress-bar-interrupted, .progress-bar-interrupted::-webkit-progress-bar {
+        background: #F44336;
+    }
+</style>
+
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: left;">
+      <th>epoch</th>
+      <th>train_loss</th>
+      <th>valid_loss</th>
+      <th>accuracy</th>
+      <th>time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0.615340</td>
+      <td>0.356023</td>
+      <td>0.888889</td>
+      <td>00:39</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>0.270150</td>
+      <td>0.213896</td>
+      <td>0.932990</td>
+      <td>00:40</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>0.084770</td>
+      <td>0.181070</td>
+      <td>0.943299</td>
+      <td>00:40</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Export-the-model">
+<a class="anchor" href="#Export-the-model" aria-hidden="true"><span class="octicon octicon-link"></span></a>Export the model<a class="anchor-link" href="#Export-the-model"> </a>
+</h3>
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<details class="description" open="">
+      <summary class="btn btn-sm" data-open="Hide Code" data-close="Show Code"></summary>
+        <p></p>
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">learn</span><span class="o">.</span><span class="n">export</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+    </details>
+</div>
+    
+
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="gputrain/gputrainsite"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/sound/hugging%20face/fastai/2022/05/23/Urban-Sounds-8k-Classification-with-Hugging-Face-Demo.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>Joseph Matthew&#39;s machine learning journey through blog and code on GPUs</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/gputrain" target="_blank" title="gputrain"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://twitter.com/gputrain" target="_blank" title="gputrain"><svg class="svg-icon grey"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
